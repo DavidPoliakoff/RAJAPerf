@@ -49,6 +49,9 @@ Executor::~Executor()
   for (size_t ik = 0; ik < kernels.size(); ++ik) {
     delete kernels[ik];
   }
+#ifdef RAJAPERF_ENABLE_KOKKOS
+  Kokkos::finalize();
+#endif
 }
 
 
@@ -146,7 +149,9 @@ void Executor::setupSuite()
     }
 
     run_params.setInvalidKernelInput(invalid);
-
+    #ifdef RAJAPERF_ENABLE_KOKKOS
+      Kokkos::initialize();
+    #endif
   }
 
 

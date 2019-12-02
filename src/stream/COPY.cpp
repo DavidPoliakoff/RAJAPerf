@@ -93,7 +93,25 @@ void COPY::runKernel(VariantID vid)
       break;
     }
 #endif // RAJPERF_ENABLE_RAJA
+#ifdef RAJAPERF_ENABLE_KOKKOS
+    case Kokkos_Lambda_Seq : {
 
+      COPY_DATA_SETUP_CPU;
+
+      startTimer();
+      for (RepIndex_type irep = 0; irep < run_reps; ++irep) {
+
+        Kokkos::parallel_for("perfsuite.stream.kokkos.seq.lambda.copy",
+          Kokkos::RangePolicy<Kokkos::Serial>(ibegin, iend), [=](Index_type i) {
+          COPY_BODY;
+        });
+
+      }
+      stopTimer();
+
+      break;
+    }
+#endif //RAJAPERF_ENABLE_KOKKOS
 #if defined(RAJA_ENABLE_OPENMP)
     case Base_OpenMP : {
 
@@ -132,6 +150,25 @@ void COPY::runKernel(VariantID vid)
       break;
     }
 #endif // RAJPERF_ENABLE_RAJA
+#ifdef RAJAPERF_ENABLE_KOKKOS
+    case Kokkos_Lambda_OpenMP : {
+
+      COPY_DATA_SETUP_CPU;
+
+      startTimer();
+      for (RepIndex_type irep = 0; irep < run_reps; ++irep) {
+
+        Kokkos::parallel_for("perfsuite.stream.kokkos.openmp.lambda.copy",
+          Kokkos::RangePolicy<Kokkos::OpenMP>(ibegin, iend), [=](Index_type i) {
+          COPY_BODY;
+        });
+
+      }
+      stopTimer();
+
+      break;
+    }
+#endif //RAJAPERF_ENABLE_KOKKOS
 #endif
 
 #if defined(RAJA_ENABLE_TARGET_OPENMP)

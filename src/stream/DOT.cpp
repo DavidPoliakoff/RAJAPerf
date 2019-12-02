@@ -104,6 +104,29 @@ void DOT::runKernel(VariantID vid)
       break;
     }
 #endif // RAJPERF_ENABLE_RAJA
+#ifdef RAJAPERF_ENABLE_KOKKOS
+    case Kokkos_Lambda_Seq : {
+
+      DOT_DATA_SETUP_CPU;
+
+      startTimer();
+      for (RepIndex_type irep = 0; irep < run_reps; ++irep) {
+
+        //RAJA::ReduceSum<RAJA::seq_reduce, Real_type> dot(m_dot_init);
+        Real_type dot;
+        Kokkos::parallel_reduce("put.profiling.string.here",
+          Kokkos::RangePolicy<Kokkos::Serial>(ibegin, iend), [=](const Index_type& i, Real_type& dot) {
+          DOT_BODY;
+        }, dot);
+
+        //m_dot += static_cast<Real_type>(dot.get());
+
+      }
+      stopTimer();
+
+      break;
+    }
+#endif // RAJPERF_ENABLE_KOKKOS
 
 #if defined(RAJA_ENABLE_OPENMP)
     case Base_OpenMP : {
@@ -151,6 +174,29 @@ void DOT::runKernel(VariantID vid)
       break;
     }
 #endif // RAJPERF_ENABLE_RAJA
+#ifdef RAJAPERF_ENABLE_KOKKOS
+    case Kokkos_Lambda_OpenMP : {
+
+      DOT_DATA_SETUP_CPU;
+
+      startTimer();
+      for (RepIndex_type irep = 0; irep < run_reps; ++irep) {
+
+        //RAJA::ReduceSum<RAJA::seq_reduce, Real_type> dot(m_dot_init);
+        Real_type dot;
+        Kokkos::parallel_reduce("put.profiling.string.here",
+          Kokkos::RangePolicy<Kokkos::OpenMP>(ibegin, iend), [=](const Index_type& i, Real_type& dot) {
+          DOT_BODY;
+        }, dot);
+
+        //m_dot += static_cast<Real_type>(dot.get());
+
+      }
+      stopTimer();
+
+      break;
+    }
+#endif // RAJPERF_ENABLE_KOKKOS
 #endif
 
 #if defined(RAJA_ENABLE_TARGET_OPENMP)

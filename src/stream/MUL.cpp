@@ -96,6 +96,25 @@ void MUL::runKernel(VariantID vid)
       break;
     }
 #endif // RAJPERF_ENABLE_RAJA
+#ifdef RAJAPERF_ENABLE_KOKKOS
+    case Kokkos_Lambda_Seq : {
+
+      MUL_DATA_SETUP_CPU;
+
+      startTimer();
+      for (RepIndex_type irep = 0; irep < run_reps; ++irep) {
+
+        Kokkos::parallel_for("put.profiling.string.here",
+          Kokkos::RangePolicy<Kokkos::Serial>(ibegin, iend), [=](Index_type i) {
+          MUL_BODY;
+        });
+
+      }
+      stopTimer();
+
+      break;
+    }
+#endif // RAJPERF_ENABLE_KOKKOS
 
 #if defined(RAJA_ENABLE_OPENMP)
     case Base_OpenMP : {
@@ -135,6 +154,25 @@ void MUL::runKernel(VariantID vid)
       break;
     }
 #endif // RAJPERF_ENABLE_RAJA
+#ifdef RAJAPERF_ENABLE_KOKKOS
+    case Kokkos_Lambda_OpenMP : {
+
+      MUL_DATA_SETUP_CPU;
+
+      startTimer();
+      for (RepIndex_type irep = 0; irep < run_reps; ++irep) {
+
+        Kokkos::parallel_for("put.profiling.string.here",
+          Kokkos::RangePolicy<Kokkos::OpenMP>(ibegin, iend), [=](Index_type i) {
+          MUL_BODY;
+        });
+
+      }
+      stopTimer();
+
+      break;
+    }
+#endif // RAJPERF_ENABLE_KOKKOS
 #endif
 
 #if defined(RAJA_ENABLE_TARGET_OPENMP)
