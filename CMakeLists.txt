@@ -69,6 +69,8 @@ set(RAJAPERF_ENABLE_RAJA ON)
 
 endif() # enable RAJA
 
+if(ENABLE_KOKKOS)
+
 add_subdirectory(tpl/kokkos)
 
 get_property(KOKKOS_INCLUDE_DIRS DIRECTORY tpl/kokkos PROPERTY INCLUDE_DIRECTORIES)
