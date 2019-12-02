@@ -187,14 +187,20 @@ static const std::string VariantNames [] =
 
   std::string("Base_Seq"),
   std::string("RAJA_Seq"),
+  std::string("Kokkos_Lambda_Seq"),
+  std::string("Kokkos_Functor_Seq"),
 
 #if defined(RAJA_ENABLE_OPENMP)
   std::string("Base_OpenMP"),
   std::string("RAJA_OpenMP"),
+  std::string("Kokkos_Lambda_OpenMP"),
+  std::string("Kokkos_Functor_OpenMP"),
 
 #if defined(RAJA_ENABLE_TARGET_OPENMP)  
   std::string("Base_OpenMPTarget"),
   std::string("RAJA_OpenMPTarget"),
+  std::string("Kokkos_Lambda_OpenMPTarget"),
+  std::string("Kokkos_Functor_OpenMPTarget"),
 #endif
 
 #endif
@@ -202,6 +208,8 @@ static const std::string VariantNames [] =
 #if defined(RAJA_ENABLE_CUDA)
   std::string("Base_CUDA"),
   std::string("RAJA_CUDA"),
+  std::string("Kokkos_Lambda_CUDA"),
+  std::string("Kokkos_Functor_CUDA"),
 #endif
 
   std::string("Unknown Variant")  // Keep this at the end and DO NOT remove....
@@ -276,85 +284,87 @@ KernelBase* getKernelObject(KernelID kid,
 
   switch ( kid ) {
 
-    //
-    // Basic kernels...
-    //
-    case Basic_MULADDSUB : {
-       kernel = new basic::MULADDSUB(run_params);
-       break;
-    }
-    case Basic_IF_QUAD : {
-       kernel = new basic::IF_QUAD(run_params);
-       break;
-    }
-    case Basic_TRAP_INT : {
-       kernel = new basic::TRAP_INT(run_params);
-       break;
-    }
-    case Basic_INIT3 : {
-       kernel = new basic::INIT3(run_params);
-       break;
-    }
-    case Basic_REDUCE3_INT : {
-       kernel = new basic::REDUCE3_INT(run_params);
-       break;
-    }
-    case Basic_NESTED_INIT : {
-       kernel = new basic::NESTED_INIT(run_params);
-       break;
-    }
-    case Basic_INIT_VIEW1D : {
-       kernel = new basic::INIT_VIEW1D(run_params);
-       break;
-    }
-    case Basic_INIT_VIEW1D_OFFSET : {
-       kernel = new basic::INIT_VIEW1D_OFFSET(run_params);
-       break;
-    }
+//TODO DZP: when this is general, remove the comments for the unused kernels
 
+//    //
+//    // Basic kernels...
+//    //
+//    case Basic_MULADDSUB : {
+//       kernel = new basic::MULADDSUB(run_params);
+//       break;
+//    }
+//    case Basic_IF_QUAD : {
+//       kernel = new basic::IF_QUAD(run_params);
+//       break;
+//    }
+//    case Basic_TRAP_INT : {
+//       kernel = new basic::TRAP_INT(run_params);
+//       break;
+//    }
+//    case Basic_INIT3 : {
+//       kernel = new basic::INIT3(run_params);
+//       break;
+//    }
+//    case Basic_REDUCE3_INT : {
+//       kernel = new basic::REDUCE3_INT(run_params);
+//       break;
+//    }
+//    case Basic_NESTED_INIT : {
+//       kernel = new basic::NESTED_INIT(run_params);
+//       break;
+//    }
+//    case Basic_INIT_VIEW1D : {
+//       kernel = new basic::INIT_VIEW1D(run_params);
+//       break;
+//    }
+//    case Basic_INIT_VIEW1D_OFFSET : {
+//       kernel = new basic::INIT_VIEW1D_OFFSET(run_params);
+//       break;
+//    }
 //
-// Lcals kernels...
+////
+//// Lcals kernels...
+////
+//    case Lcals_HYDRO_1D : {
+//       kernel = new lcals::HYDRO_1D(run_params);
+//       break;
+//    }
+//    case Lcals_EOS : {
+//       kernel = new lcals::EOS(run_params);
+//       break;
+//    }
+//    case Lcals_INT_PREDICT : {
+//       kernel = new lcals::INT_PREDICT(run_params);
+//       break;
+//    }
+//    case Lcals_DIFF_PREDICT : {
+//       kernel = new lcals::DIFF_PREDICT(run_params);
+//       break;
+//    }
+//    case Lcals_FIRST_DIFF : {
+//       kernel = new lcals::FIRST_DIFF(run_params);
+//       break;
+//    }
+//    case Lcals_PLANCKIAN : {
+//       kernel = new lcals::PLANCKIAN(run_params);
+//       break;
+//    }
 //
-    case Lcals_HYDRO_1D : {
-       kernel = new lcals::HYDRO_1D(run_params);
-       break;
-    }
-    case Lcals_EOS : {
-       kernel = new lcals::EOS(run_params);
-       break;
-    }
-    case Lcals_INT_PREDICT : {
-       kernel = new lcals::INT_PREDICT(run_params);
-       break;
-    }
-    case Lcals_DIFF_PREDICT : {
-       kernel = new lcals::DIFF_PREDICT(run_params);
-       break;
-    }
-    case Lcals_FIRST_DIFF : {
-       kernel = new lcals::FIRST_DIFF(run_params);
-       break;
-    }
-    case Lcals_PLANCKIAN : {
-       kernel = new lcals::PLANCKIAN(run_params);
-       break;
-    }
-
-//
-// Polybench kernels...
-//
-    case Polybench_2MM : {
-       kernel = new polybench::POLYBENCH_2MM(run_params);
-       break;
-    }
-    case Polybench_3MM : {
-       kernel = new polybench::POLYBENCH_3MM(run_params);
-       break;
-    }
-    case Polybench_GEMMVER : {
-       kernel = new polybench::POLYBENCH_GEMMVER(run_params);
-       break;
-    }
+////
+//// Polybench kernels...
+////
+//    case Polybench_2MM : {
+//       kernel = new polybench::POLYBENCH_2MM(run_params);
+//       break;
+//    }
+//    case Polybench_3MM : {
+//       kernel = new polybench::POLYBENCH_3MM(run_params);
+//       break;
+//    }
+//    case Polybench_GEMMVER : {
+//       kernel = new polybench::POLYBENCH_GEMMVER(run_params);
+//       break;
+//    }
 
 //
 // Stream kernels...
@@ -380,41 +390,41 @@ KernelBase* getKernelObject(KernelID kid,
        break;
     }
 
-//
-// Apps kernels...
-//
-    case Apps_PRESSURE : {
-       kernel = new apps::PRESSURE(run_params);
-       break;
-    }
-    case Apps_ENERGY : {
-       kernel = new apps::ENERGY(run_params);
-       break;
-    }
-    case Apps_VOL3D : {
-       kernel = new apps::VOL3D(run_params);
-       break;
-    }
-    case Apps_DEL_DOT_VEC_2D : {
-       kernel = new apps::DEL_DOT_VEC_2D(run_params);
-       break;
-    }
-    case Apps_FIR : {
-       kernel = new apps::FIR(run_params);
-       break;
-    }
-    case Apps_LTIMES : {
-       kernel = new apps::LTIMES(run_params);
-       break;
-    }
-    case Apps_LTIMES_NOVIEW : {
-       kernel = new apps::LTIMES_NOVIEW(run_params);
-       break;
-    }
-    case Apps_COUPLE : {
-       kernel = new apps::COUPLE(run_params);
-       break;
-    }
+////
+//// Apps kernels...
+////
+//    case Apps_PRESSURE : {
+//       kernel = new apps::PRESSURE(run_params);
+//       break;
+//    }
+//    case Apps_ENERGY : {
+//       kernel = new apps::ENERGY(run_params);
+//       break;
+//    }
+//    case Apps_VOL3D : {
+//       kernel = new apps::VOL3D(run_params);
+//       break;
+//    }
+//    case Apps_DEL_DOT_VEC_2D : {
+//       kernel = new apps::DEL_DOT_VEC_2D(run_params);
+//       break;
+//    }
+//    case Apps_FIR : {
+//       kernel = new apps::FIR(run_params);
+//       break;
+//    }
+//    case Apps_LTIMES : {
+//       kernel = new apps::LTIMES(run_params);
+//       break;
+//    }
+//    case Apps_LTIMES_NOVIEW : {
+//       kernel = new apps::LTIMES_NOVIEW(run_params);
+//       break;
+//    }
+//    case Apps_COUPLE : {
+//       kernel = new apps::COUPLE(run_params);
+//       break;
+//    }
 
     default: {
       std::cout << "\n Unknown Kernel ID = " << kid << std::endl;

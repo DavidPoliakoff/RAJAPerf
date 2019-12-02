@@ -15,7 +15,7 @@
 
 #include "DEL_DOT_VEC_2D.hpp"
 
-#include "RAJA/RAJA.hpp"
+#include "common/RajaPerfSuite.hpp"
 
 #include "AppsData.hpp"
 #include "common/DataUtils.hpp"
@@ -113,7 +113,7 @@ void DEL_DOT_VEC_2D::runKernel(VariantID vid)
 
       break;
     } 
-
+#ifdef RAJAPERF_ENABLE_RAJA
     case RAJA_Seq : {
 
       DEL_DOT_VEC_2D_DATA_SETUP_CPU;
@@ -137,7 +137,7 @@ void DEL_DOT_VEC_2D::runKernel(VariantID vid)
 
       break;
     }
-
+#endif // RAJPERF_ENABLE_RAJA
 #if defined(RAJA_ENABLE_OPENMP)      
     case Base_OpenMP : {
 
@@ -164,6 +164,7 @@ void DEL_DOT_VEC_2D::runKernel(VariantID vid)
       break;
     }
 
+#ifdef RAJAPERF_ENABLE_RAJA
     case RAJA_OpenMP : {
 
       DEL_DOT_VEC_2D_DATA_SETUP_CPU;
@@ -187,15 +188,18 @@ void DEL_DOT_VEC_2D::runKernel(VariantID vid)
 
       break;
     }
+#endif // RAJPERF_ENABLE_RAJA
 #endif
 
 #if defined(RAJA_ENABLE_TARGET_OPENMP)
     case Base_OpenMPTarget :
+#ifdef RAJAPERF_ENABLE_RAJA
     case RAJA_OpenMPTarget :
     {
       runOpenMPTargetVariant(vid);
       break;
     }
+#endif // RAJPERF_ENABLE_RAJA
 #endif
 
 #if defined(RAJA_ENABLE_CUDA)

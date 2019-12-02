@@ -20,7 +20,17 @@
 #ifndef RAJAPerfSuite_HPP
 #define RAJAPerfSuite_HPP
 
+#include <rajaperf_config.hpp>
+
+#ifdef RAJAPERF_ENABLE_RAJA
 #include "RAJA/config.hpp"
+#include "RAJA/RAJA.hpp"
+#endif
+
+#ifdef RAJAPERF_ENABLE_KOKKOS
+#include<Kokkos_Macros.hpp>
+#include<Kokkos_Core.hpp>
+#endif
 
 #include <string>
 
@@ -164,14 +174,20 @@ enum VariantID {
 
   Base_Seq = 0,
   RAJA_Seq,
+  Kokkos_Lambda_Seq,
+  Kokkos_Functor_Seq,
 
 #if defined(RAJA_ENABLE_OPENMP)
   Base_OpenMP,
   RAJA_OpenMP,
+  Kokkos_Lambda_OpenMP,
+  Kokkos_Functor_OpenMP,
 
 #if defined(RAJA_ENABLE_TARGET_OPENMP)  
   Base_OpenMPTarget,
   RAJA_OpenMPTarget,
+  Kokkos_Lambda_OpenMPTarget,
+  Kokkos_Functor_OpenMPTarget,
 #endif
 
 #endif
@@ -179,6 +195,8 @@ enum VariantID {
 #if defined(RAJA_ENABLE_CUDA)
   Base_CUDA,
   RAJA_CUDA,
+  Kokkos_Lambda_CUDA,
+  Kokkos_Functor_CUDA,
 #endif
 
   NumVariants // Keep this one last and NEVER comment out (!!)

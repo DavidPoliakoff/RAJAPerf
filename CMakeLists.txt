@@ -115,6 +115,8 @@ endif()
 configure_file(${CMAKE_SOURCE_DIR}/src/rajaperf_config.hpp.in
   ${CMAKE_CURRENT_BINARY_DIR}/bin/rajaperf_config.hpp)
 
+include_directories(${CMAKE_CURRENT_BINARY_DIR}/bin/)
+
 # Make sure RAJA flag propagate
 set (CUDA_NVCC_FLAGS ${RAJA_NVCC_FLAGS})
 

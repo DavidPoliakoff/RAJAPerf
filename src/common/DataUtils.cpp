@@ -16,8 +16,9 @@
 
 #include "DataUtils.hpp"
 
-
+#ifdef RAJAPERF_ENABLE_RAJA
 #include "RAJA/internal/MemUtils_CPU.hpp"
+#endif
 
 #include <cstdlib>
 

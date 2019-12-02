@@ -15,7 +15,7 @@
 
 #include "MUL.hpp"
 
-#include "RAJA/RAJA.hpp"
+#include "common/RajaPerfSuite.hpp"
 
 #include "common/DataUtils.hpp"
 
@@ -77,6 +77,7 @@ void MUL::runKernel(VariantID vid)
       break;
     }
 
+#ifdef RAJAPERF_ENABLE_RAJA
     case RAJA_Seq : {
 
       MUL_DATA_SETUP_CPU;
@@ -94,6 +95,7 @@ void MUL::runKernel(VariantID vid)
 
       break;
     }
+#endif // RAJPERF_ENABLE_RAJA
 
 #if defined(RAJA_ENABLE_OPENMP)
     case Base_OpenMP : {
@@ -114,6 +116,7 @@ void MUL::runKernel(VariantID vid)
       break;
     }
 
+#ifdef RAJAPERF_ENABLE_RAJA
     case RAJA_OpenMP : {
 
       MUL_DATA_SETUP_CPU;
@@ -131,24 +134,29 @@ void MUL::runKernel(VariantID vid)
 
       break;
     }
+#endif // RAJPERF_ENABLE_RAJA
 #endif
 
 #if defined(RAJA_ENABLE_TARGET_OPENMP)
     case Base_OpenMPTarget :
+#ifdef RAJAPERF_ENABLE_RAJA
     case RAJA_OpenMPTarget :
     {
       runOpenMPTargetVariant(vid);
       break;
     }
+#endif // RAJPERF_ENABLE_RAJA
 #endif
 
 #if defined(RAJA_ENABLE_CUDA)
     case Base_CUDA :
+#ifdef RAJAPERF_ENABLE_RAJA
     case RAJA_CUDA :
     {
       runCudaVariant(vid);
       break;
     }
+#endif // RAJPERF_ENABLE_RAJA
 #endif
 
     default : {

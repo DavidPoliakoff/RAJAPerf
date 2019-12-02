@@ -15,7 +15,7 @@
 
 #include "DOT.hpp"
 
-#include "RAJA/RAJA.hpp"
+#include "common/RajaPerfSuite.hpp"
 
 #if defined(RAJA_ENABLE_CUDA)
 

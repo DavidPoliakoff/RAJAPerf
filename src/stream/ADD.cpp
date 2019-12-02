@@ -15,7 +15,7 @@
 
 #include "ADD.hpp"
 
-#include "RAJA/RAJA.hpp"
+#include "common/RajaPerfSuite.hpp"
 
 #include "common/DataUtils.hpp"
 
@@ -76,6 +76,7 @@ void ADD::runKernel(VariantID vid)
       break;
     }
 
+#ifdef RAJAPERF_ENABLE_RAJA
     case RAJA_Seq : {
 
       ADD_DATA_SETUP_CPU;
@@ -93,7 +94,24 @@ void ADD::runKernel(VariantID vid)
 
       break;
     }
+#endif // RAJPERF_ENABLE_RAJA
+#ifdef RAJAPERF_ENABLE_KOKKOS
+   case Kokkos_Lambda_Seq: {
+     ADD_DATA_SETUP_CPU;
+     startTimer();
+     for (RepIndex_type irep = 0; irep < run_reps; ++irep) {
 
+       Kokkos::parallel_for("perfsuite.stream.add",
+         Kokkos::RangePolicy<Kokkos::Serial>(ibegin, iend), [=](Index_type i) {
+         ADD_BODY;
+       });
+
+     }
+     
+     stopTimer();
+     break;
+   }
+#endif
 #if defined(RAJA_ENABLE_OPENMP)
     case Base_OpenMP : {
 
@@ -113,6 +131,7 @@ void ADD::runKernel(VariantID vid)
       break;
     }
 
+#ifdef RAJAPERF_ENABLE_RAJA
     case RAJA_OpenMP : {
 
       ADD_DATA_SETUP_CPU;
@@ -130,24 +149,29 @@ void ADD::runKernel(VariantID vid)
 
       break;
     }
+#endif // RAJPERF_ENABLE_RAJA
 #endif
 
 #if defined(RAJA_ENABLE_TARGET_OPENMP)
     case Base_OpenMPTarget : 
+#ifdef RAJAPERF_ENABLE_RAJA
     case RAJA_OpenMPTarget :
     {
       runOpenMPTargetVariant(vid);
       break;
     }
+#endif // RAJPERF_ENABLE_RAJA
 #endif
 
 #if defined(RAJA_ENABLE_CUDA)
     case Base_CUDA : 
+#ifdef RAJAPERF_ENABLE_RAJA
     case RAJA_CUDA :
     {
       runCudaVariant(vid);
       break;
     }
+#endif // RAJPERF_ENABLE_RAJA
 #endif
 
     default : {

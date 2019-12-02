@@ -22,7 +22,7 @@
 #include "common/DataUtils.hpp"
 #include "common/RunParams.hpp"
 
-#include "RAJA/util/Timer.hpp"
+#include "common/Timer.hpp"
 
 #include <string>
 #include <iostream>

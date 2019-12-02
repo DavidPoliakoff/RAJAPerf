@@ -71,7 +71,7 @@
 
 #include "common/KernelBase.hpp"
 
-#include "RAJA/RAJA.hpp"
+#include "common/RajaPerfSuite.hpp"
 
 namespace rajaperf 
 {

@@ -15,7 +15,7 @@
 
 #include "PRESSURE.hpp"
 
-#include "RAJA/RAJA.hpp"
+#include "common/RajaPerfSuite.hpp"
 
 #include "common/DataUtils.hpp"
 

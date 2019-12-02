@@ -15,7 +15,7 @@
 
 #include "ADD.hpp"
 
-#include "RAJA/RAJA.hpp"
+#include "common/RajaPerfSuite.hpp"
 
 #if defined(RAJA_ENABLE_TARGET_OPENMP)
 

@@ -20,7 +20,9 @@
 #ifndef RAJAPerf_RPTypes_HPP
 #define RAJAPerf_RPTypes_HPP
 
+#ifdef RAJAPERF_ENABLE_RAJA
 #include "RAJA/util/types.hpp"
+#endif
 
 //
 // Only one of the following (double or float) should be defined.
@@ -62,9 +64,23 @@ using RepIndex_type = volatile int;
  *
  ******************************************************************************
  */
+#ifdef RAJAPERF_ENABLE_RAJA
 using Index_type = RAJA::Index_type;
+#else
+using Index_type = unsigned long; // TODO DZP: check this is what Index_type is
+#endif
 ///
 using Index_ptr = Index_type*;
+
+#ifdef RAJAPERF_ENABLE_RAJA
+#define RAJAPERF_RESTRICT RAJA_RESTRICT
+#else
+#if defined (_WIN32)
+#define RAJAPERF_RESTRICT __restrict
+#else
+#define RAJAPERF_RESTRICT __restrict__
+#endif
+#endif
 
 
 /*!
@@ -110,7 +126,7 @@ using Real_type = float;
 #endif
 
 using Real_ptr = Real_type*;
-typedef Real_type* RAJA_RESTRICT ResReal_ptr;
+typedef Real_type* RAJAPERF_RESTRICT ResReal_ptr;
 
 
 #if defined(RP_USE_COMPLEX)
@@ -118,7 +134,7 @@ typedef Real_type* RAJA_RESTRICT ResReal_ptr;
 using Complex_type = std::complex<Real_type>;
 
 using Complex_ptr = Complex_type*;
-typedef Complex_type* RAJA_RESTRICT ResComplex_ptr;
+typedef Complex_type* RAJAPERF_RESTRICT ResComplex_ptr;
 #endif
 
 
