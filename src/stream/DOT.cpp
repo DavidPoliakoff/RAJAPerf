@@ -119,7 +119,7 @@ void DOT::runKernel(VariantID vid)
           DOT_BODY;
         }, dot);
 
-        //m_dot += static_cast<Real_type>(dot.get());
+        m_dot += dot;
 
       }
       stopTimer();
@@ -189,7 +189,7 @@ void DOT::runKernel(VariantID vid)
           DOT_BODY;
         }, dot);
 
-        //m_dot += static_cast<Real_type>(dot.get());
+        m_dot += dot;
 
       }
       stopTimer();
