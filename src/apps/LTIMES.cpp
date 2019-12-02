@@ -15,7 +15,7 @@
 
 #include "LTIMES.hpp"
 
-#include "common/RajaPerfSuite.hpp"
+#include "common/RAJAPerfSuite.hpp"
 
 #include "common/DataUtils.hpp"
 

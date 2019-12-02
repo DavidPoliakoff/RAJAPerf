@@ -43,8 +43,8 @@ set(BLT_CXX_STANDARD 11)
 
 if(ENABLE_RAJA)
 
-set(ENABLE_TESTS On CACHE Bool "")
-set(ENABLE_EXAMPLES On CACHE Bool "")
+set(ENABLE_TESTS Off CACHE Bool "")
+set(ENABLE_EXAMPLES Off CACHE Bool "")
 set(ENABLE_DOCUMENTATION Off CACHE Bool "")
 
 set(ENABLE_TBB Off CACHE Bool "")
@@ -71,18 +71,18 @@ endif() # enable RAJA
 
 if(ENABLE_KOKKOS)
 
+if(ENABLE_OPENMP)
+set(Kokkos_ENABLE_OPENMP ON)
+else()
+set(Kokkos_ENABLE_OPENMP OFF)
+endif()
 add_subdirectory(tpl/kokkos)
-
 get_property(KOKKOS_INCLUDE_DIRS DIRECTORY tpl/kokkos PROPERTY INCLUDE_DIRECTORIES)
 include_directories(${KOKKOS_INCLUDE_DIRS})
 
 list(APPEND RAJA_PERFSUITE_DEPENDS kokkos)
 
 set(RAJAPERF_ENABLE_KOKKOS ON)
-
-if(ENABLE_KOKKOS)
-
-
 
 endif() # enable Kokkos
 #

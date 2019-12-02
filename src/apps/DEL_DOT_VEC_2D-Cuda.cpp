@@ -15,7 +15,7 @@
 
 #include "DEL_DOT_VEC_2D.hpp"
 
-#include "common/RajaPerfSuite.hpp"
+#include "common/RAJAPerfSuite.hpp"
 
 #if defined(RAJA_ENABLE_CUDA)
 

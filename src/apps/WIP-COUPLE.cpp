@@ -15,7 +15,7 @@
 
 #include "WIP-COUPLE.hpp"
 
-#include "common/RajaPerfSuite.hpp"
+#include "common/RAJAPerfSuite.hpp"
 
 #include "AppsData.hpp"
 #include "common/DataUtils.hpp"

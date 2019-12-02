@@ -15,7 +15,7 @@
 
 #include "VOL3D.hpp"
 
-#include "common/RajaPerfSuite.hpp"
+#include "common/RAJAPerfSuite.hpp"
 
 #include "AppsData.hpp"
 #include "common/DataUtils.hpp"
