@@ -21,6 +21,11 @@ project(RAJAPerfSuite CXX)
 # Initialize the BLT build system
 #
 
+option(ENABLE_RAJA "Use RAJA backend" ON)
+option(ENABLE_KOKKOS "Use Kokkos backend" OFF)
+
+set(RAJA_PERFSUITE_DEPENDS)
+
 if (PERFSUITE_ENABLE_WARNINGS)
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Werror")
 endif()
@@ -35,6 +40,8 @@ set(BLT_CXX_STANDARD 11)
 #
 # Define RAJA settings...
 #
+
+if(ENABLE_RAJA)
 
 set(ENABLE_TESTS On CACHE Bool "")
 set(ENABLE_EXAMPLES On CACHE Bool "")
@@ -56,7 +63,26 @@ add_subdirectory(tpl/RAJA)
 get_property(RAJA_INCLUDE_DIRS DIRECTORY tpl/RAJA PROPERTY INCLUDE_DIRECTORIES)
 include_directories(${RAJA_INCLUDE_DIRS})
 
+list(APPEND RAJA_PERFSUITE_DEPENDS RAJA)
 
+set(RAJAPERF_ENABLE_RAJA ON)
+
+endif() # enable RAJA
+
+add_subdirectory(tpl/kokkos)
+
+get_property(KOKKOS_INCLUDE_DIRS DIRECTORY tpl/kokkos PROPERTY INCLUDE_DIRECTORIES)
+include_directories(${KOKKOS_INCLUDE_DIRS})
+
+list(APPEND RAJA_PERFSUITE_DEPENDS kokkos)
+
+set(RAJAPERF_ENABLE_KOKKOS ON)
+
+if(ENABLE_KOKKOS)
+
+
+
+endif() # enable Kokkos
 #
 # Setup variables to pass to Perf suite
 #
@@ -65,7 +91,6 @@ set(RAJA_PERFSUITE_VERSION_MAJOR 0)
 set(RAJA_PERFSUITE_VERSION_MINOR 3)
 set(RAJA_PERFSUITE_VERSION_PATCHLEVEL 0)
 
-set(RAJA_PERFSUITE_DEPENDS RAJA)
 if (ENABLE_OPENMP)
   list(APPEND RAJA_PERFSUITE_DEPENDS openmp)
 endif()
