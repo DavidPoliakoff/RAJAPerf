@@ -413,10 +413,10 @@ KernelBase* getKernelObject(KernelID kid,
 //       kernel = new apps::FIR(run_params);
 //       break;
 //    }
-//    case Apps_LTIMES : {
-//       kernel = new apps::LTIMES(run_params);
-//       break;
-//    }
+    case Apps_LTIMES : {
+       kernel = new apps::LTIMES(run_params);
+       break;
+    }
 //    case Apps_LTIMES_NOVIEW : {
 //       kernel = new apps::LTIMES_NOVIEW(run_params);
 //       break;

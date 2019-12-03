@@ -51,6 +51,16 @@ void ADD::setUp(VariantID vid)
   allocAndInitDataConst(m_c, getRunSize(), 0.0, vid);
 }
 
+struct AddFunctor {
+  ResReal_ptr a;
+  ResReal_ptr b;
+  ResReal_ptr c;
+  AddFunctor(ResReal_ptr a,ResReal_ptr b, ResReal_ptr c) : a(a), b(b), c(c) {}
+  void operator()(const Index_type i) const{
+    ADD_BODY;
+  }
+};
+
 void ADD::runKernel(VariantID vid)
 {
   const Index_type run_reps = getRunReps();
@@ -105,6 +115,20 @@ void ADD::runKernel(VariantID vid)
          Kokkos::RangePolicy<Kokkos::Serial>(ibegin, iend), [=](Index_type i) {
          ADD_BODY;
        });
+
+     }
+     
+     stopTimer();
+     break;
+   }
+   case Kokkos_Functor_Seq: {
+     ADD_DATA_SETUP_CPU;
+     startTimer();
+     AddFunctor adder(a,b,c);
+     for (RepIndex_type irep = 0; irep < run_reps; ++irep) {
+
+       Kokkos::parallel_for("perfsuite.stream.seq.functor.add",
+         Kokkos::RangePolicy<Kokkos::Serial>(ibegin, iend), adder); 
 
      }
      
@@ -167,6 +191,20 @@ void ADD::runKernel(VariantID vid)
       
       break;
     }
+   case Kokkos_Functor_OpenMP: {
+     ADD_DATA_SETUP_CPU;
+     startTimer();
+     AddFunctor adder(a,b,c);
+     for (RepIndex_type irep = 0; irep < run_reps; ++irep) {
+
+       Kokkos::parallel_for("perfsuite.stream.openmp.functor.add",
+         Kokkos::RangePolicy<Kokkos::OpenMP>(ibegin, iend), adder); 
+
+     }
+     
+     stopTimer();
+     break;
+   }
 #if defined(RAJA_ENABLE_TARGET_OPENMP)
     case Base_OpenMPTarget : 
 #ifdef RAJAPERF_ENABLE_RAJA

@@ -32,6 +32,21 @@ namespace stream
   ResReal_ptr c = m_c; \
   Real_type alpha = m_alpha;
 
+struct MulFunctor {
+
+  ResReal_ptr b;
+  ResReal_ptr c;
+
+  const Real_type alpha;
+
+  MulFunctor(ResReal_ptr b,ResReal_ptr c, Real_type alpha) : b(b), c(c), alpha(alpha) {}
+
+  void operator()(const Index_type i) const {
+    MUL_BODY;
+  }
+
+};
+
 
 MUL::MUL(const RunParams& params)
   : KernelBase(rajaperf::Stream_MUL, params)
@@ -114,6 +129,21 @@ void MUL::runKernel(VariantID vid)
 
       break;
     }
+    case Kokkos_Functor_Seq : {
+
+      MUL_DATA_SETUP_CPU;
+      MulFunctor mul_functor(b,c,alpha);
+      startTimer();
+      for (RepIndex_type irep = 0; irep < run_reps; ++irep) {
+
+        Kokkos::parallel_for("put.profiling.string.here",
+          Kokkos::RangePolicy<Kokkos::Serial>(ibegin, iend), mul_functor);
+
+      }
+      stopTimer();
+
+      break;
+    }
 #endif // RAJPERF_ENABLE_KOKKOS
 
 #if defined(RAJA_ENABLE_OPENMP)
@@ -166,6 +196,21 @@ void MUL::runKernel(VariantID vid)
           Kokkos::RangePolicy<Kokkos::OpenMP>(ibegin, iend), [=](Index_type i) {
           MUL_BODY;
         });
+
+      }
+      stopTimer();
+
+      break;
+    }
+    case Kokkos_Functor_OpenMP : {
+
+      MUL_DATA_SETUP_CPU;
+      MulFunctor mul_functor(b,c,alpha);
+      startTimer();
+      for (RepIndex_type irep = 0; irep < run_reps; ++irep) {
+
+        Kokkos::parallel_for("put.profiling.string.here",
+          Kokkos::RangePolicy<Kokkos::OpenMP>(ibegin, iend), mul_functor);
 
       }
       stopTimer();

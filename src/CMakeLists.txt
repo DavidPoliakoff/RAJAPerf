@@ -16,7 +16,7 @@
 include_directories(.)
 
 add_subdirectory(common)
-#add_subdirectory(apps)
+add_subdirectory(apps)
 #add_subdirectory(basic)
 #add_subdirectory(lcals)
 #add_subdirectory(polybench)
@@ -24,7 +24,7 @@ add_subdirectory(stream)
 
 set(RAJA_PERFSUITE_EXECUTABLE_DEPENDS
     common
-    #apps
+    apps
     #basic
     #lcals
     #polybench
@@ -57,7 +57,7 @@ blt_add_executable(
   #apps/VOL3D.cpp
   #apps/VOL3D-Cuda.cpp
   #apps/VOL3D-OMPTarget.cpp
-  #apps/LTIMES.cpp
+  apps/LTIMES.cpp
   #apps/LTIMES-Cuda.cpp
   #apps/LTIMES-OMPTarget.cpp
   #apps/LTIMES_NOVIEW.cpp

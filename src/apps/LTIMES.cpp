@@ -37,6 +37,24 @@ namespace apps
   Index_type num_g = m_num_g; \
   Index_type num_m = m_num_m;
 
+struct LTimesFunctor {
+
+  ResReal_ptr phidat;
+  ResReal_ptr elldat;
+  ResReal_ptr psidat;
+
+  const Index_type num_d;
+  const Index_type num_z;
+  const Index_type num_g;
+  const Index_type num_m;
+
+  LTimesFunctor(ResReal_ptr phidat, ResReal_ptr elldat, ResReal_ptr psidat, Index_type num_d, Index_type num_z, Index_type num_g, Index_type num_m) : phidat(phidat), elldat(elldat), psidat(psidat), num_d(num_d), num_z(num_z), num_g(num_g), num_m(num_m){} 
+
+  void operator()(Index_type m,Index_type d, Index_type g, Index_type z) const {
+    LTIMES_BODY;
+  }
+
+};
 
 LTIMES::LTIMES(const RunParams& params)
   : KernelBase(rajaperf::Apps_LTIMES, params)
@@ -99,7 +117,7 @@ void LTIMES::runKernel(VariantID vid)
 
       break;
     } 
-
+    #ifdef RAJAPERF_ENABLE_RAJA
     case RAJA_Seq : {
 
       LTIMES_DATA_SETUP_CPU;
@@ -129,6 +147,58 @@ void LTIMES::runKernel(VariantID vid)
 
       break;
     }
+    #endif 
+    #ifdef RAJAPERF_ENABLE_KOKKOS
+    case Kokkos_Functor_Seq : {
+
+      LTIMES_DATA_SETUP_CPU;
+      Kokkos::MDRangePolicy<Kokkos::Serial,Kokkos::Rank<4>> policy({0,0,0,0},{num_m,num_d,num_g,num_z});
+      LTimesFunctor ltimes_functor(phidat, elldat, psidat, num_d, num_z, num_g, num_m);
+      startTimer();
+      for (RepIndex_type irep = 0; irep < run_reps; ++irep) {
+      
+        //RAJA::nested::forall(EXEC_POL{},
+        //                     RAJA::make_tuple(IDRange(0, num_d),
+        //                                      IZRange(0, num_z),
+        //                                      IGRange(0, num_g),
+        //                                      IMRange(0, num_m)), 
+        //  [=](ID d, IZ z, IG g, IM m) {
+        //  LTIMES_BODY_RAJA;
+        //});
+        Kokkos::parallel_for( "put.profiling.string.here", policy,
+          ltimes_functor);
+
+      }
+      stopTimer(); 
+
+      break;
+    }
+    case Kokkos_Lambda_Seq : {
+
+      LTIMES_DATA_SETUP_CPU;
+      Kokkos::MDRangePolicy<Kokkos::Serial,Kokkos::Rank<4>> policy({0,0,0,0},{num_m,num_d,num_g,num_z});
+      startTimer();
+      for (RepIndex_type irep = 0; irep < run_reps; ++irep) {
+      
+        //RAJA::nested::forall(EXEC_POL{},
+        //                     RAJA::make_tuple(IDRange(0, num_d),
+        //                                      IZRange(0, num_z),
+        //                                      IGRange(0, num_g),
+        //                                      IMRange(0, num_m)), 
+        //  [=](ID d, IZ z, IG g, IM m) {
+        //  LTIMES_BODY_RAJA;
+        //});
+        Kokkos::parallel_for( "put.profiling.string.here", policy,
+          [=](Index_type m, Index_type d, Index_type z, Index_type g) {
+          LTIMES_BODY;
+        });
+
+      }
+      stopTimer(); 
+
+      break;
+    }
+    #endif
 
 #if defined(RAJA_ENABLE_OPENMP)      
     case Base_OpenMP : {
@@ -155,6 +225,7 @@ void LTIMES::runKernel(VariantID vid)
       break;
     }
 
+    #ifdef RAJAPERF_ENABLE_RAJA
     case RAJA_OpenMP : {
 
       LTIMES_DATA_SETUP_CPU;
@@ -184,6 +255,58 @@ void LTIMES::runKernel(VariantID vid)
 
       break;
     }
+    #endif
+    #ifdef RAJAPERF_ENABLE_KOKKOS
+    case Kokkos_Functor_OpenMP : {
+
+      LTIMES_DATA_SETUP_CPU;
+      Kokkos::MDRangePolicy<Kokkos::OpenMP,Kokkos::Rank<4>> policy({0,0,0,0},{num_m,num_d,num_g,num_z});
+      LTimesFunctor ltimes_functor(phidat, elldat, psidat, num_d, num_z, num_g, num_m);
+      startTimer();
+      for (RepIndex_type irep = 0; irep < run_reps; ++irep) {
+      
+        //RAJA::nested::forall(EXEC_POL{},
+        //                     RAJA::make_tuple(IDRange(0, num_d),
+        //                                      IZRange(0, num_z),
+        //                                      IGRange(0, num_g),
+        //                                      IMRange(0, num_m)), 
+        //  [=](ID d, IZ z, IG g, IM m) {
+        //  LTIMES_BODY_RAJA;
+        //});
+        Kokkos::parallel_for( "put.profiling.string.here", policy,
+          ltimes_functor);
+
+      }
+      stopTimer(); 
+
+      break;
+    }
+    case Kokkos_Lambda_OpenMP : {
+
+      LTIMES_DATA_SETUP_CPU;
+      Kokkos::MDRangePolicy<Kokkos::OpenMP,Kokkos::Rank<4>> policy({0,0,0,0},{num_m,num_d,num_g,num_z});
+      startTimer();
+      for (RepIndex_type irep = 0; irep < run_reps; ++irep) {
+      
+        //RAJA::nested::forall(EXEC_POL{},
+        //                     RAJA::make_tuple(IDRange(0, num_d),
+        //                                      IZRange(0, num_z),
+        //                                      IGRange(0, num_g),
+        //                                      IMRange(0, num_m)), 
+        //  [=](ID d, IZ z, IG g, IM m) {
+        //  LTIMES_BODY_RAJA;
+        //});
+        Kokkos::parallel_for( "put.profiling.string.here", policy,
+          [=](Index_type m, Index_type d, Index_type z, Index_type g) {
+          LTIMES_BODY;
+        });
+
+      }
+      stopTimer(); 
+
+      break;
+    }
+    #endif
 #endif
 
 #if defined(RAJA_ENABLE_TARGET_OPENMP)

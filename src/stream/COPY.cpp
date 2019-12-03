@@ -31,6 +31,14 @@ namespace stream
   ResReal_ptr a = m_a; \
   ResReal_ptr c = m_c;
 
+struct CopyFunctor {
+  ResReal_ptr a;
+  ResReal_ptr c;
+  CopyFunctor(ResReal_ptr a,ResReal_ptr c) : a(a), c(c) {}
+  void operator()(const Index_type i) const {
+    COPY_BODY;
+  }
+};
 
 COPY::COPY(const RunParams& params)
   : KernelBase(rajaperf::Stream_COPY, params)
@@ -111,6 +119,21 @@ void COPY::runKernel(VariantID vid)
 
       break;
     }
+    case Kokkos_Functor_Seq : {
+
+      COPY_DATA_SETUP_CPU;
+      CopyFunctor copier(a,c);
+      startTimer();
+      for (RepIndex_type irep = 0; irep < run_reps; ++irep) {
+
+        Kokkos::parallel_for("perfsuite.stream.kokkos.seq.functor.copy",
+          Kokkos::RangePolicy<Kokkos::Serial>(ibegin, iend), copier);
+
+      }
+      stopTimer();
+
+      break;
+    }
 #endif //RAJAPERF_ENABLE_KOKKOS
 #if defined(RAJA_ENABLE_OPENMP)
     case Base_OpenMP : {
@@ -162,6 +185,21 @@ void COPY::runKernel(VariantID vid)
           Kokkos::RangePolicy<Kokkos::OpenMP>(ibegin, iend), [=](Index_type i) {
           COPY_BODY;
         });
+
+      }
+      stopTimer();
+
+      break;
+    }
+    case Kokkos_Functor_OpenMP : {
+
+      COPY_DATA_SETUP_CPU;
+      CopyFunctor copier(a,c);
+      startTimer();
+      for (RepIndex_type irep = 0; irep < run_reps; ++irep) {
+
+        Kokkos::parallel_for("perfsuite.stream.kokkos.openmp.functor.copy",
+          Kokkos::RangePolicy<Kokkos::OpenMP>(ibegin, iend), copier);
 
       }
       stopTimer();

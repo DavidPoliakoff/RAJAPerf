@@ -31,6 +31,17 @@ namespace stream
   ResReal_ptr a = m_a; \
   ResReal_ptr b = m_b;
 
+struct DotFunctor {
+  ResReal_ptr a;
+  ResReal_ptr b;
+
+  DotFunctor (ResReal_ptr a, ResReal_ptr b) : a(a), b(b) {}
+ 
+  void operator()(const Index_type i, Real_type& dot) const {
+    DOT_BODY;
+  }
+
+};
 
 DOT::DOT(const RunParams& params)
   : KernelBase(rajaperf::Stream_DOT, params)
@@ -126,6 +137,25 @@ void DOT::runKernel(VariantID vid)
 
       break;
     }
+    case Kokkos_Functor_Seq : {
+
+      DOT_DATA_SETUP_CPU;
+      DotFunctor dot_functor(a,b);
+      startTimer();
+      for (RepIndex_type irep = 0; irep < run_reps; ++irep) {
+
+        //RAJA::ReduceSum<RAJA::seq_reduce, Real_type> dot(m_dot_init);
+        Real_type dot;
+        Kokkos::parallel_reduce("put.profiling.string.here",
+          Kokkos::RangePolicy<Kokkos::Serial>(ibegin, iend), dot_functor, dot);
+
+        m_dot += dot;
+
+      }
+      stopTimer();
+
+      break;
+    }
 #endif // RAJPERF_ENABLE_KOKKOS
 
 #if defined(RAJA_ENABLE_OPENMP)
@@ -188,6 +218,24 @@ void DOT::runKernel(VariantID vid)
           Kokkos::RangePolicy<Kokkos::OpenMP>(ibegin, iend), [=](const Index_type& i, Real_type& dot) {
           DOT_BODY;
         }, dot);
+
+        m_dot += dot;
+
+      }
+      stopTimer();
+
+      break;
+    }
+    case Kokkos_Functor_OpenMP : {
+
+      DOT_DATA_SETUP_CPU;
+      DotFunctor dot_functor(a,b);
+      startTimer();
+      for (RepIndex_type irep = 0; irep < run_reps; ++irep) {
+
+        Real_type dot;
+        Kokkos::parallel_reduce("put.profiling.string.here",
+          Kokkos::RangePolicy<Kokkos::OpenMP>(ibegin, iend), dot_functor, dot);
 
         m_dot += dot;
 
